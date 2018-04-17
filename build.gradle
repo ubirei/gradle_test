@@ -1,0 +1,64 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
+
+// compiler
+sourceCompatibility = 9
+targetCompatibility = 9
+
+def defaultEncoding = 'UTF-8'
+[compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+
+configurations {
+    all*.exclude module: 'servlet-api'
+}
+
+dependencies {
+    implementation 'javax.servlet:javax.servlet-api:4.0.0'
+
+    // RESTful
+    def jerseyVersion = '2.27'
+    compile "org.glassfish.jersey.core:jersey-common:${jerseyVersion}"
+    compile "org.glassfish.jersey.core:jersey-server:${jerseyVersion}"
+    compile "org.glassfish.jersey.core:jersey-client:${jerseyVersion}"
+    compile "org.glassfish.jersey.media:jersey-media-json-jackson:${jerseyVersion}"
+    compile "org.glassfish.jersey.media:jersey-media-multipart:${jerseyVersion}"
+    compile "org.glassfish.jersey.containers:jersey-container-servlet:${jerseyVersion}"
+    compile "org.glassfish.jersey.inject:jersey-hk2:${jerseyVersion}"
+    compile 'javax.xml.bind:jaxb-api:2.3.0'
+    compile 'javax.activation:activation:1.1.1'
+    
+    // log
+    compile 'org.slf4j:slf4j-api:1.7.25'
+
+    // test
+    testImplementation 'junit:junit:4.12'
+    
+    // tomcat
+    def tomcatVersion = '9.0.7'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+}
+
+tomcat {
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
+}
+
+repositories {
+    jcenter()
+}

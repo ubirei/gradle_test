@@ -1,0 +1,24 @@
+/.gradle/
+*.class
+
+# Eclipse meta file
+.classpath
+.factorypath
+.project
+.settings/
+.tomcatplugin
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# generated file
+target/
+/bin
+
+# application settings
+
+# test
+
+/build/
